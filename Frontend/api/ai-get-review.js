@@ -1,3 +1,5 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -6,22 +8,15 @@ export default async function handler(req, res) {
 
   try {
     const { code } = req.body;
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    // Call Gemini API using the environment variable
-    const apiKey = process.env.GOOGLE_GEMINI_KEY;
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: `Review this code:\n${code}` }] }]
-        })
-      }
+    const result = await model.generateContent(
+      `Review this code:\n${code}`
     );
 
-    const data = await response.json();
-    res.status(200).json({ result: data });
+    const text = await result.response.text();
+    res.status(200).json({ result: text });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
