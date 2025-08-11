@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     // Call Gemini API using the environment variable
     const apiKey = process.env.GOOGLE_GEMINI_KEY;
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
